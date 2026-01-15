@@ -31,6 +31,8 @@ type TrackerInfo struct {
 	ProviderChain C.Chain      `json:"providerChains"`
 	Rule          string       `json:"rule"`
 	RulePayload   string       `json:"rulePayload"`
+	InitialUpload   int64 `json:"-"` // upload counter snapshot at connection creation
+	InitialDownload int64 `json:"-"` // download counter snapshot at connection creation
 }
 
 type tcpTracker struct {
@@ -131,6 +133,8 @@ func NewTCPTracker(conn C.Conn, manager *Manager, metadata *C.Metadata, rule C.R
 			Rule:          "",
 			UploadTotal:   atomic.NewInt64(uploadTotal),
 			DownloadTotal: atomic.NewInt64(downloadTotal),
+			InitialUpload:   uploadTotal,
+			InitialDownload: downloadTotal,
 		},
 		pushToManager: pushToManager,
 	}
@@ -223,6 +227,8 @@ func NewUDPTracker(conn C.PacketConn, manager *Manager, metadata *C.Metadata, ru
 			Rule:          "",
 			UploadTotal:   atomic.NewInt64(uploadTotal),
 			DownloadTotal: atomic.NewInt64(downloadTotal),
+			InitialUpload:   uploadTotal,
+			InitialDownload: downloadTotal,
 		},
 		pushToManager: pushToManager,
 	}
