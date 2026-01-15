@@ -28,6 +28,8 @@ var (
 	updatingGeo atomic.Bool
 )
 
+var GeoUpdateHook = func(geoType string, updating bool, skipped bool, updateErr error) {}
+
 func GeoAutoUpdate() bool {
 	return autoUpdate
 }

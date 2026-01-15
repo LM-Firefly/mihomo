@@ -10,6 +10,9 @@ import (
 )
 
 var DefaultManager *Manager
+var DefaultRequestNotify = func(_ Tracker) {}
+var DefaultConnEventFunc = func(_ Tracker, _ bool) {} // true=join, false=leave
+var DefaultTelemetryFunc = func(_, _, _, _ int64) {}  // uploadRate, downloadRate, uploadTotal, downloadTotal
 
 func init() {
 	DefaultManager = &Manager{
@@ -39,10 +42,12 @@ type Manager struct {
 
 func (m *Manager) Join(c Tracker) {
 	m.connections.Store(c.ID(), c)
+	DefaultConnEventFunc(c, true)
 }
 
 func (m *Manager) Leave(c Tracker) {
 	m.connections.Delete(c.ID())
+	DefaultConnEventFunc(c, false)
 }
 
 func (m *Manager) Get(id string) (c Tracker) {
@@ -116,8 +121,11 @@ func (m *Manager) handle() {
 	ticker := time.NewTicker(time.Second)
 
 	for range ticker.C {
-		m.uploadBlip.Store(m.uploadTemp.Swap(0))
-		m.downloadBlip.Store(m.downloadTemp.Swap(0))
+		uploadRate := m.uploadTemp.Swap(0)
+		downloadRate := m.downloadTemp.Swap(0)
+		m.uploadBlip.Store(uploadRate)
+		m.downloadBlip.Store(downloadRate)
+		DefaultTelemetryFunc(uploadRate, downloadRate, m.uploadTotal.Load(), m.downloadTotal.Load())
 	}
 }
 
