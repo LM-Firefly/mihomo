@@ -22,6 +22,8 @@ import (
 
 var UnifiedDelay = atomic.NewBool(false)
 
+var UrlTestHook = func(url string, name string, delay uint16) {}
+
 const (
 	defaultHistoriesNum = 10
 )

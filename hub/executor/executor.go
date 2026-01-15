@@ -44,6 +44,8 @@ import (
 
 var mux sync.Mutex
 
+var DefaultProviderLoadedHook = func(providerName string) {}
+
 func readConfig(path string) ([]byte, error) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return nil, err
