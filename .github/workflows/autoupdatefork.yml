@@ -1,0 +1,26 @@
+#更新fork
+name: update fork
+
+on:
+  schedule:
+    - cron: '0 2 * * *' #2点定时任务
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.repository.owner.id == github.event.sender.id && github.actor != 'MetaCubeX' }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Set env
+      run: |
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "github-actions"
+    - name: Update fork
+      run: |
+        git remote add upstream https://github.com/MetaCubeX/mihomo.git
+        git remote -v
+        git fetch upstream
+        git checkout Alpha
+        git merge upstream/Alpha
+        git push origin Alpha
