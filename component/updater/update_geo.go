@@ -26,6 +26,8 @@ var (
 	updateInterval int
 
 	updatingGeo atomic.Bool
+
+	GeoUpdateHook func(geoType string, updating bool, skipped bool, updateErr error)
 )
 
 func GeoAutoUpdate() bool {
