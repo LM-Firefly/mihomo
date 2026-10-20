@@ -1,0 +1,29 @@
+#更新fork
+name: update fork
+
+on:
+  schedule:
+    - cron: '0 16 * * *' #0点定时任务
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.repository != 'MetaCubeX/mihomo'
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+    - name: Set env
+      run: |
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "github-actions"
+    - name: Update fork
+      run: |
+        git remote add upstream https://github.com/MetaCubeX/mihomo.git
+        git fetch upstream
+        git checkout Alpha
+        git merge upstream/Alpha
+        git push origin FlClash
